@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security
+	 					http://www.springframework.org/schema/security/spring-security-4.0.xsd
+						http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+
+<import resource="jpaContext.xml"/>
+		 
+	<security:http auto-config="true" use-expressions="true" >
+		<security:intercept-url pattern="/portfolio/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" />
+		<security:form-login 
+							login-processing-url="/j_spring_security_check"
+							login-page="/login"  
+							username-parameter="username" 
+							password-parameter="password" 
+							authentication-failure-url="/fail" />
+		<security:remember-me key="user" />
+		<security:csrf disabled="true"/>		
+		
+		<security:logout/>
+		<security:session-management>
+			<security:concurrency-control max-sessions="1"  />
+		</security:session-management>
+		
+	</security:http>
+	
+	
+<security:authentication-manager>
+		<security:authentication-provider>
+		<security:password-encoder hash="bcrypt"/>
+	
+	<security:user-service>
+				<security:user name="user" password="aqw" authorities="ROLE_USER" />
+				<security:user name="admin" password="aqw" authorities="ROLE_USER,ROLE_ADMIN" />
+			</security:user-service>
+		<security:jdbc-user-service data-source-ref="dataSource" />
+		</security:authentication-provider>
+</security:authentication-manager>
+	
+	
+	
+	
+</beans>
